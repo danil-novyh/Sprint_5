@@ -1,9 +1,9 @@
 class Urls:
     # Основная страница
-    url_main_paige = "https://stellarburgers.nomoreparties.site/"
+    BASE_URL = "https://stellarburgers.nomoreparties.site/"
 
     # Ссылка на страницу входа
-    url_login = "https://stellarburgers.nomoreparties.site/login"
+    LOGIN_PAGE = "https://stellarburgers.nomoreparties.site/login"
 
     # Ссылка формы Личный кабинет -> Профиль
     url_profile = "https://stellarburgers.nomoreparties.site/account/profile"

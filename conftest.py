@@ -68,16 +68,15 @@ def logged_in_user(driver, wait):
 
     yield driver
 
-    # Teardown: Выход из аккаунта
+    # !!!!!Выход из аккаунта
     try:
         # Переход в Личный кабинет, затем выход
         driver.get(BASE_URL)
         wait.until(EC.element_to_be_clickable(LINK_PROFILE)).click()
-        wait.until(EC.url_contains("/account/profile")) 
+        wait.until(EC.url_contains("/account/profile"))
         
         logout_button = wait.until(EC.element_to_be_clickable(BUTTON_LOGOUT))
         logout_button.click()
         wait.until(EC.url_to_be(LOGIN_PAGE))
-    except Exception: 
-        # ИСПРАВЛЕНО: Убран print.
+    except Exception:
         pass
