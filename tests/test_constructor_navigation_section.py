@@ -6,7 +6,7 @@ from locators import (
     SECTION_BUNS,
     SECTION_SAUCES,
     SECTION_FILLINGS,
-    ACTIVE_TAB_NAME #!!!Добавлен локатор для проверки текста активного таба
+    ACTIVE_TAB_NAME #!!!Локатор для проверки текста активного таба
 )
 
 class TestConstructorNavigation:
