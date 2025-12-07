@@ -3,9 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# Используем правильные импорты
-from urls import BASE_URL, LOGIN_PAGE
-from data import TEST_USER
+from urls import url_main_page, url_login_page
+from data import Credential
 from locators import (
     BUTTON_MAIN_LOGIN,
     INPUT_EMAIL,
@@ -16,7 +15,7 @@ from locators import (
     LINK_PROFILE
 )
 
-@pytest.fixture(scope="function") # ИСПРАВЛЕНО: Сменено на scope="function" для атомарности
+@pytest.fixture(scope="function")
 def driver():
     """Фикстура для инициализации и закрытия драйвера Chrome (scope='function')."""
     options = webdriver.ChromeOptions()
@@ -28,9 +27,9 @@ def driver():
     # service = Service(ChromeDriverManager().install())
     # driver = webdriver.Chrome(service=service, options=options)
     driver = webdriver.Chrome(options=options)
-    driver.get(BASE_URL)
+    driver.get(url_main_page)
     yield driver
-    driver.quit() # driver.quit() в конце каждой функции, как того требует атомарность
+    driver.quit()
 
 @pytest.fixture
 def wait(driver):
@@ -43,13 +42,13 @@ def logged_in_user(driver, wait):
     ИСПРАВЛЕНО: Заменяет 'login' и 'logout'. Выполняет авторизацию (setup)
     и выход (teardown) после теста.
     """
-    # Setup: Логинимся
-    driver.get(BASE_URL)
+    #Вход
+    driver.get(url_main_page)
     
-    # Клик по кнопке для перехода на страницу входа
+    #Клик по кнопке для перехода на страницу входа
     wait.until(EC.element_to_be_clickable(BUTTON_MAIN_LOGIN)).click()
     
-    wait.until(EC.url_to_be(LOGIN_PAGE))
+    wait.until(EC.url_to_be(url_login_page))
 
     email_input = wait.until(EC.visibility_of_element_located(INPUT_EMAIL))
     email_input.clear()
@@ -62,21 +61,20 @@ def logged_in_user(driver, wait):
     login_button = wait.until(EC.element_to_be_clickable(BUTTON_LOGIN))
     login_button.click()
     
-    # Ожидание успешного входа
-    wait.until(EC.url_to_be(BASE_URL + '/')) 
+    #Ожидание успешного входа
+    wait.until(EC.url_to_be(url_main_page + '/')) 
     wait.until(EC.element_to_be_clickable(LINK_PROFILE))
 
     yield driver
 
-    # !!!!!Выход из аккаунта
     try:
-        # Переход в Личный кабинет, затем выход
-        driver.get(BASE_URL)
+        #Переход в Личный кабинет, затем выход
+        driver.get(url_main_page)
         wait.until(EC.element_to_be_clickable(LINK_PROFILE)).click()
         wait.until(EC.url_contains("/account/profile"))
         
         logout_button = wait.until(EC.element_to_be_clickable(BUTTON_LOGOUT))
         logout_button.click()
-        wait.until(EC.url_to_be(LOGIN_PAGE))
+        wait.until(EC.url_to_be(url_login_page))
     except Exception:
         pass
