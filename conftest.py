@@ -52,11 +52,11 @@ def logged_in_user(driver, wait):
 
     email_input = wait.until(EC.visibility_of_element_located(INPUT_EMAIL))
     email_input.clear()
-    email_input.send_keys(TEST_USER["email"])
+    email_input.send_keys(Credential["email"])
 
     password_input = driver.find_element(*INPUT_PASSWORD)
     password_input.clear()
-    password_input.send_keys(TEST_USER["password"])
+    password_input.send_keys(Credential["password"])
 
     login_button = wait.until(EC.element_to_be_clickable(BUTTON_LOGIN))
     login_button.click()
