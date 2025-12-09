@@ -11,7 +11,6 @@ from locators import (
     INPUT_PASSWORD,
     BUTTON_LOGIN,
     MENU_PROFILE,
-    BUTTON_LOGOUT,
     LINK_PROFILE
 )
 
@@ -39,8 +38,7 @@ def wait(driver):
 @pytest.fixture
 def logged_in_user(driver, wait):
     """
-    ИСПРАВЛЕНО: Заменяет 'login' и 'logout'. Выполняет авторизацию (setup)
-    и выход (teardown) после теста.
+    Фикстура для входа в аккаунт.
     """
     #Вход
     driver.get(url_main_page)
@@ -52,11 +50,11 @@ def logged_in_user(driver, wait):
 
     email_input = wait.until(EC.visibility_of_element_located(INPUT_EMAIL))
     email_input.clear()
-    email_input.send_keys(Credential["email"])
+    email_input.send_keys(Credential.email)
 
     password_input = driver.find_element(*INPUT_PASSWORD)
     password_input.clear()
-    password_input.send_keys(Credential["password"])
+    password_input.send_keys(Credential.password)
 
     login_button = wait.until(EC.element_to_be_clickable(BUTTON_LOGIN))
     login_button.click()
@@ -66,15 +64,3 @@ def logged_in_user(driver, wait):
     wait.until(EC.element_to_be_clickable(LINK_PROFILE))
 
     yield driver
-
-    try:
-        #Переход в Личный кабинет, затем выход
-        driver.get(url_main_page)
-        wait.until(EC.element_to_be_clickable(LINK_PROFILE)).click()
-        wait.until(EC.url_contains("/account/profile"))
-        
-        logout_button = wait.until(EC.element_to_be_clickable(BUTTON_LOGOUT))
-        logout_button.click()
-        wait.until(EC.url_to_be(url_login_page))
-    except Exception:
-        pass

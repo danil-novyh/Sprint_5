@@ -1,6 +1,3 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pytest
 from selenium.webdriver.support import expected_conditions as EC
 from urls import url_login_page, url_forgot_password
@@ -24,10 +21,6 @@ class TestLoginFromRecovery:
         return_link.click()
 
         wait.until(EC.url_to_be(url_login_page))
-
-        email_input = wait.until(EC.visibility_of_element_located(INPUT_EMAIL))
-        assert email_input.is_displayed(), "Поле email не отображается"
-
-        #Завершение синтаксиса и добавление assert на видимость кнопки
-        login_button = wait.until(EC.visibility_of_element_located(BUTTON_LOGIN))
-        assert login_button.is_displayed(), "Кнопка 'Войти' не отображается"
+        #ИСПРАВЛЕНО: Проверяем наличие ключевых элементов формы входа
+        wait.until(EC.visibility_of_element_located(INPUT_EMAIL))
+        wait.until(EC.visibility_of_element_located(BUTTON_LOGIN))
