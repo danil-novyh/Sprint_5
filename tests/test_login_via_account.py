@@ -8,23 +8,36 @@ from locators import (
     BUTTON_LOGIN,
     MENU_PROFILE
 )
+from data import Credential
+#Добавлен класс
+class TestLoginViaAccount:
+    """Тесты входа через ссылку 'Личный кабинет' на главной странице."""
 
-def test_login_via_profile(driver, wait, user_data):
-    """Вход через «Личный кабинет»."""
-    driver.get(url_main_page)
-    
-    #1. Клик по ссылке "Личный кабинет"
-    wait.until(EC.element_to_be_clickable(LINK_PROFILE)).click()
+    def _perform_login(self, driver, wait, email, password):
+        """Выполняет стандартный вход через форму."""
+        driver.find_element(*INPUT_EMAIL).send_keys(email)
+        driver.find_element(*INPUT_PASSWORD).send_keys(password)
+        wait.until(EC.element_to_be_clickable(BUTTON_LOGIN)).click()
 
-    #2. Ввод данных
-    driver.find_element(*INPUT_EMAIL).send_keys(user_data["email"])
-    driver.find_element(*INPUT_PASSWORD).send_keys(user_data["password"])
+    def test_login_via_profile(self, driver, wait):
+        """Вход через «Личный кабинет»."""
+        driver.get(url_main_page)
     
-    #3. Клик по кнопке "Войти"
-    wait.until(EC.element_to_be_clickable(BUTTON_LOGIN)).click()
+        #1. Клик по ссылке "Личный кабинет"
+        wait.until(EC.element_to_be_clickable(LINK_PROFILE)).click()
+        
+        wait.until(EC.visibility_of_element_located(INPUT_EMAIL))
+        
+        #2. Ввод данных
+        #driver.find_element(*INPUT_EMAIL).send_keys(Credential.email)
+        #driver.find_element(*INPUT_PASSWORD).send_keys(Credential.password)
+        #3. Клик по кнопке "Войти"
+        #wait.until(EC.element_to_be_clickable(BUTTON_LOGIN)).click()
+        #2-3. Ввод данных и вход
+        self._perform_login(driver, wait, Credential.email, Credential.password)
 
-    #4. Проверка успешного входа
-    wait.until(EC.url_to_be(url_main_page + '/'))
-    profile_menu = wait.until(EC.visibility_of_element_located(MENU_PROFILE))
+        #4. Проверка успешного входа
+        wait.until(EC.url_to_be(url_main_page + '/'))
+        profile_menu = wait.until(EC.visibility_of_element_located(MENU_PROFILE))
     
-    assert profile_menu.is_displayed(), "Меню 'Профиль' не отображается после входа"
+        assert profile_menu.is_displayed(), "Меню 'Профиль' не отображается после входа"

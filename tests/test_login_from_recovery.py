@@ -22,5 +22,9 @@ class TestLoginFromRecovery:
 
         wait.until(EC.url_to_be(url_login_page))
         #ИСПРАВЛЕНО: Проверяем наличие ключевых элементов формы входа
-        wait.until(EC.visibility_of_element_located(INPUT_EMAIL))
-        wait.until(EC.visibility_of_element_located(BUTTON_LOGIN))
+        email_input = wait.until(EC.visibility_of_element_located(INPUT_EMAIL))
+        login_button = wait.until(EC.visibility_of_element_located(BUTTON_LOGIN))
+        #Добавил ассерт
+        assert email_input.is_displayed(), "Поле 'email' не отображается после возврата на страницу входа"
+        assert login_button.is_displayed(), "Кнопка 'Войти' не отображается после возврата на страницу входа"
+        assert driver.current_url == url_login_page, "Фактический URL не совпадает со страницей входа"
