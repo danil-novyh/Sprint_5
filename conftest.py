@@ -22,21 +22,14 @@ def driver():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--start-maximized")
     
-    # Рекомендуется использовать webdriver-manager для автоматического управления драйвером
-    # service = Service(ChromeDriverManager().install())
-    # driver = webdriver.Chrome(service=service, options=options)
     driver = webdriver.Chrome(options=options)
     driver.get(url_main_page)
     yield driver
     driver.quit()
 
-@pytest.fixture
-def wait(driver):
-    """Фикстура для явного ожидания (WebDriverWait)."""
-    return WebDriverWait(driver, 10)
 
 @pytest.fixture
-def logged_in_user(driver, wait):
+def logged_in_user(driver):
     """
     Фикстура для входа в аккаунт.
     """
@@ -44,11 +37,11 @@ def logged_in_user(driver, wait):
     driver.get(url_main_page)
     
     #Клик по кнопке для перехода на страницу входа
-    wait.until(EC.element_to_be_clickable(BUTTON_MAIN_LOGIN)).click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(BUTTON_MAIN_LOGIN)).click()
     
-    wait.until(EC.url_to_be(url_login_page))
+    WebDriverWait(driver, 10).until(EC.url_to_be(url_login_page))
 
-    email_input = wait.until(EC.visibility_of_element_located(INPUT_EMAIL))
+    email_input = WebDriverWait(driver, 10).until(EC.visibility_of_element_located(INPUT_EMAIL))
     email_input.clear()
     email_input.send_keys(Credential.email)
 
@@ -56,11 +49,11 @@ def logged_in_user(driver, wait):
     password_input.clear()
     password_input.send_keys(Credential.password)
 
-    login_button = wait.until(EC.element_to_be_clickable(BUTTON_LOGIN))
+    login_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable(BUTTON_LOGIN))
     login_button.click()
     
     #Ожидание успешного входа
-    wait.until(EC.url_to_be(url_main_page + '/')) 
-    wait.until(EC.element_to_be_clickable(LINK_PROFILE))
+    WebDriverWait(driver, 10).until(EC.url_to_be(url_main_page + '/')) 
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(LINK_PROFILE))
 
     yield driver
