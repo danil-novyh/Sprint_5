@@ -34,3 +34,4 @@ class TestRegistrationIncorrectPassword:
         error_msg = WebDriverWait(driver, 10).until(EC.visibility_of_element_located(ERROR_INPUT))
     
         assert error_msg.text == "Некорректный пароль", "Сообщение о некорректном пароле не отобразилось или неверно"
+        

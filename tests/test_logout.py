@@ -2,26 +2,40 @@ import pytest
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from urls import url_login_page, url_main_page
-from locators import BUTTON_LOGOUT, LINK_PROFILE
+from locators import (
+    BUTTON_LOGOUT_PAGE,
+    INPUT_EMAIL,
+    INPUT_PASSWORD,
+    BUTTON_MAIN_LOGIN,
+    ORDER_BUTTON,
+    BUTTON_ACCOUNT,
+    BUTTON_PAGE_LOGIN, 
+    BUTTON_LOGIN_PAGE
+)
+from data import Credential
 # Добавлен класс
 class TestLogout:
     """Тесты выхода из аккаунта."""
 
-    def test_explicit_logout(self, driver, logged_in_user):
+    def test_explicit_logout(self, driver):
         """
         Проверяет выход из аккаунта по кнопке 'Выход' в Личном кабинете.
-        logged_in_user обеспечивает вход перед тестом.
         """
-        #1. Переход в Личный кабинет
+        # Заходим на главную страницу
         driver.get(url_main_page)
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(LINK_PROFILE)).click()
-        
-        #2. Клик по кнопке "Выход"
-        WebDriverWait(driver, 10).until(EC.url_contains("/account/profile"))
-        logout_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable(BUTTON_LOGOUT))
-        logout_button.click()
-    
-        #3. Проверка редиректа на страницу входа
-        WebDriverWait(driver, 10).until(EC.url_to_be(url_login_page))
-    
-        assert driver.current_url == url_login_page, "Выход не привел на страницу входа"
+        # На главной странице кнопка "Вход в аккаунт"
+        driver.find_element(*BUTTON_MAIN_LOGIN).click()
+        driver.find_element(*INPUT_EMAIL).send_keys(Credential.email)
+        driver.find_element(*INPUT_PASSWORD).send_keys(Credential.password)
+        # Нажимаем на кнопку Войти
+        driver.find_element(*BUTTON_LOGIN_PAGE).click()
+        # Ждем когда станет видима кнопка "Оформить заказ"
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located(ORDER_BUTTON))
+        # Нажимаем кнопку "Личный кабинет"
+        driver.find_element(*BUTTON_ACCOUNT).click()
+        # Ждем когда станет видима кнопка "Выход"
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located(BUTTON_LOGOUT_PAGE))
+        driver.find_element(*BUTTON_LOGOUT_PAGE).click()
+        # Проверяем перенаправление
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located(BUTTON_PAGE_LOGIN))
+        assert driver.current_url == url_login_page

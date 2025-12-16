@@ -1,47 +1,30 @@
 import pytest
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-from urls import url_main_page
+from urls import url_register_page
 from locators import (
-    LINK_REGISTER,
-    LINK_ALREADY_ACCOUNT,
     INPUT_EMAIL,
+    BUTTON_REG_LOGIN,
     INPUT_PASSWORD,
+    ORDER_BUTTON,
     BUTTON_LOGIN,
-    MENU_PROFILE
 )
 from data import Credential
 
-
 class TestLoginFromRegistration:
-    def _perform_login(self, driver, email, password):
-        """Вспомогательный метод для выполнения входа."""
-        driver.find_element(*INPUT_EMAIL).send_keys(email)
-        driver.find_element(*INPUT_PASSWORD).send_keys(password)
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(BUTTON_LOGIN)).click()
 
     def test_login_from_registration(self, driver):
         """Вход из формы регистрации (переход к форме входа)."""
-        
-        driver.get(url_main_page)
-        #1. Переход на страницу регистрации
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(LINK_REGISTER)).click()
-
-        #2. Переход на страницу входа по ссылке "Уже есть аккаунт?"
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(LINK_ALREADY_ACCOUNT)).click()
-        WebDriverWait(driver, 10).until(EC.url_contains("/login"))
-    
+        #Исправлено: переход на страницу регистрации
+        #1. Ожидание загрузки страницы регистрации
+        driver.get(url_register_page)
+        #2. Переход по ссылке "Войти" со страницы регистрации
+        driver.find_element(*BUTTON_REG_LOGIN).click()
         #3. Ввод данных
-        #driver.find_element(*INPUT_EMAIL).send_keys(Credential.email)
-        #driver.find_element(*INPUT_PASSWORD).send_keys(Credential.password)
+        driver.find_element(*INPUT_EMAIL).send_keys(Credential.email)
+        driver.find_element(*INPUT_PASSWORD).send_keys(Credential.password)
         #4. Клик по кнопке "Войти"
-        #WebDriverWait(driver, 10).until(EC.element_to_be_clickable(BUTTON_LOGIN)).click()
-        
-        #3-4. Ввод данных и вход
-        self._perform_login(driver, Credential.email, Credential.password)
-
+        driver.find_element(*BUTTON_LOGIN).click()
         #5. Проверка успешного входа
-        WebDriverWait(driver, 10).until(EC.url_to_be(url_main_page + '/'))
-        profile_menu = WebDriverWait(driver, 10).until(EC.visibility_of_element_located(MENU_PROFILE))
-        
-        assert profile_menu.is_displayed(), "Меню 'Профиль' не отображается после входа"
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located(ORDER_BUTTON))
+        assert driver.find_element(*ORDER_BUTTON).is_displayed()
