@@ -50,7 +50,6 @@ class TestConstructorNavigation:
         tab_element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable(tab_locator))
         tab_element.click()
         #Исправлено: Замечание - ожидание появления активного класса
-        #WebDriverWait(driver, 10).until(lambda d: "tab_tab_type_current" in d.find_element(*tab_locator).get_attribute("class"))
         WebDriverWait(driver, 10).until(
         lambda d: ACTIVE_TAB_CLASS in
             d.find_element(*tab_locator).get_attribute("class"),
