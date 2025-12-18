@@ -10,7 +10,7 @@ from locators import (
     ORDER_BUTTON,
     BUTTON_ACCOUNT,
     BUTTON_PAGE_LOGIN, 
-    BUTTON_LOGIN_PAGE
+    BUTTON_LOGIN
 )
 from data import Credential
 # Добавлен класс
@@ -28,7 +28,7 @@ class TestLogout:
         driver.find_element(*INPUT_EMAIL).send_keys(Credential.email)
         driver.find_element(*INPUT_PASSWORD).send_keys(Credential.password)
         # Нажимаем на кнопку Войти
-        driver.find_element(*BUTTON_LOGIN_PAGE).click()
+        driver.find_element(*BUTTON_LOGIN).click()
         # Ждем когда станет видима кнопка "Оформить заказ"
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located(ORDER_BUTTON))
         # Нажимаем кнопку "Личный кабинет"

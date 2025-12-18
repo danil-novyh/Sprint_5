@@ -7,7 +7,7 @@ from locators import (
     INPUT_EMAIL,
     INPUT_PASSWORD,
     BUTTON_LOGIN_REG,
-    BUTTON_LOGIN_PAGE,
+    BUTTON_LOGIN,
     ORDER_BUTTON
 )
 
@@ -30,7 +30,7 @@ class TestLoginFromRecovery:
         driver.find_element(*INPUT_PASSWORD).send_keys(Credential.password)
 
         #4. Нажать "Войти"
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(BUTTON_LOGIN_PAGE)).click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(BUTTON_LOGIN)).click()
 
         #5. Проверить успешный вход
         WebDriverWait(driver, 10).until(EC.url_to_be(url_main_page))

@@ -4,7 +4,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from urls import url_register_page
 from locators import (
     INPUT_EMAIL,
-    BUTTON_REG_LOGIN,
+    BUTTON_LOGIN_REG,
     INPUT_PASSWORD,
     ORDER_BUTTON,
     BUTTON_LOGIN,
@@ -19,7 +19,7 @@ class TestLoginFromRegistration:
         #1. Ожидание загрузки страницы регистрации
         driver.get(url_register_page)
         #2. Переход по ссылке "Войти" со страницы регистрации
-        driver.find_element(*BUTTON_REG_LOGIN).click()
+        driver.find_element(*BUTTON_LOGIN_REG).click()
         #3. Ввод данных
         driver.find_element(*INPUT_EMAIL).send_keys(Credential.email)
         driver.find_element(*INPUT_PASSWORD).send_keys(Credential.password)
