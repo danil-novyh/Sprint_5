@@ -23,14 +23,14 @@ class TestRegistrationSuccess:
         """Успешная регистрация с корректными данными."""
         driver.get(url_main_page)
         
-        #1. Переход на страницу регистрации
+        #1. Переход на страницу входа
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable(BUTTON_MAIN_LOGIN)).click()
         # Ждём загрузки страницы входа (проверка по заголовку)
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located(BUTTON_PAGE_LOGIN))
         # Теперь кликаем ссылку "Зарегистрироваться" (она есть на странице логина)        
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable(REGISTER_LINK)).click()
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located(HEADING_REGISTER))
-
+        #Генерируем тестовые данные
         name = "Тест Пользователь"
         email = TestData.generate_email()
         password = TestData.generate_password()
@@ -56,14 +56,17 @@ class TestRegistrationSuccess:
         WebDriverWait(driver, 10).until(EC.url_contains("/login"))  
         
         # Проверяем точное совпадение URL
-        current_url = driver.current_url.rstrip('/')  # Убираем слеш в конце
+        current_url = driver.current_url.rstrip('/')
         expected_url = url_login_page.rstrip('/')
-        assert current_url == expected_url, (
-            f"После успешной регистрации ожидался переход на {expected_url}, "
-            f"но получен {current_url}"
-        )
+
         # Дополнительная проверка: заголовок страницы входа виден
         login_heading = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located(BUTTON_PAGE_LOGIN) #!!!
+            EC.visibility_of_element_located(BUTTON_PAGE_LOGIN)
         )
-        assert login_heading.is_displayed(), "Заголовок страницы входа не отображается"
+        assert current_url == expected_url and login_heading.is_displayed(), (
+            f"Регистрация не завершилась корректно:\n"
+            f"- Ожидаемый URL: {expected_url}\n"
+            f"- Текущий URL: {current_url}\n"
+            f"- URL совпадает: {current_url == expected_url}\n"
+            f"- Заголовок 'Вход' виден: {login_heading.is_displayed()}"
+        )

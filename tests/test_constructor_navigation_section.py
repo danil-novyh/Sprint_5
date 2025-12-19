@@ -63,48 +63,63 @@ class TestConstructorNavigation:
         f"но найдены классы: {classes}"
         )
    
-    #ИСПРАВЛЕНО: Отредактирован добавленный тест
-    def test_navigate_away_and_back_to_buns(self, driver):
+    #ИСПРАВЛЕНО: Разделил на 2 атомарных теста
+    def test_navigate_away_to_buns(self, driver):
         """
-        Проверяет, что таб 'Булки' становится активным при клике на него после переключения на другой таб.
-        Это подтверждает, что активация происходит именно при переключении, а не только при загрузке страницы.
+        Проверяет, что при переключении с 'Булки' на 'Соусы',
+        таб 'Булки' теряет класс активности.
         """
         driver.get(url_main_page)
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located(LOGO))
     
         #1. Убедимся, что изначально активны "Булки"
         buns_tab = driver.find_element(*SECTION_BUNS)
-        buns_classes = buns_tab.get_attribute("class")
-        #Замечание - корректная проверка класса
-        assert "tab_tab_type_current" in ACTIVE_TAB_CLASS, (f"Булки не активны при открытии. Классы: {buns_classes}")
-        #2. Перейти на "Соусы"
-        sauces_tab = WebDriverWait(driver, 10).until(EC.element_to_be_clickable(SECTION_SAUCES))
-        sauces_tab.click()
-
-        #Убедимся, что "Соусы" активны
+        buns_classes_before = buns_tab.get_attribute("class")
+        if ACTIVE_TAB_CLASS not in buns_classes_before:
+            pytest.fail(
+                f"Precondition failed: таб 'Булки' не активен при загрузке. "
+                f"Классы: {buns_classes_before}"
+            )
+        #Переключиться на "Соусы"
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(SECTION_SAUCES)).click()
+        #Ждать активации "Соусы"
         WebDriverWait(driver, 10).until(
-        lambda d: ACTIVE_TAB_CLASS in d.find_element(*SECTION_SAUCES).get_attribute("class")
+            lambda d: ACTIVE_TAB_CLASS in 
+                     d.find_element(*SECTION_SAUCES).get_attribute("class")
         )
-        # Проверяем, что "Булки" теперь не активны
         buns_classes_after = driver.find_element(*SECTION_BUNS).get_attribute("class")
+        #Проверка (один assert)
         assert ACTIVE_TAB_CLASS not in buns_classes_after, (
-            f"Таб 'Булки' всё ещё активен после перехода на 'Соусы'."
-            f"Классы:{buns_classes_after}"
+            f"Таб 'Булки' всё ещё активен после переключения на 'Соусы'. "
+            f"Ожидалось отсутствие класса '{ACTIVE_TAB_CLASS}', "
+            f"но найдены классы: {buns_classes_after}"
         )
-
-        #3. Кликаем на "Булки"
-        buns_tab = WebDriverWait(driver, 10).until(EC.element_to_be_clickable(SECTION_BUNS))
-        buns_tab.click()
-        #Ждем активации "Булки"
+    
+    def test_navigate_back_to_buns(self, driver):
+        """
+        Проверяет, что при возврате на 'Булки' на другого таба,
+        таб 'Булки' снова получает класс активности.
+        """
+        driver.get(url_main_page)
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located(LOGO))
+        #Переключение на 'Соусы'
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(SECTION_SAUCES)).click()
+        #Ждем активации 'Соусы'
         WebDriverWait(driver, 10).until(
-            lambda d: ACTIVE_TAB_CLASS in
-                d.find_element(*SECTION_BUNS).get_attribute("class")
+            lambda d: ACTIVE_TAB_CLASS in 
+                     d.find_element(*SECTION_SAUCES).get_attribute("class")
         )
-
-        #4. Проверить, что "Булки" стали активными после клика
+        #Возвращаемся на 'Булки'
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(SECTION_BUNS)).click()
+        #Ждем активации 'Булки'
+        WebDriverWait(driver, 10).until(
+            lambda d: ACTIVE_TAB_CLASS in 
+                     d.find_element(*SECTION_BUNS).get_attribute("class")
+        )
         final_buns_classes = driver.find_element(*SECTION_BUNS).get_attribute("class")
+        #Единственный assert на одну проверку
         assert ACTIVE_TAB_CLASS in final_buns_classes, (
-            f"Таб 'Булки' не активен после клика."
-            f"Ожидался класс '{ACTIVE_TAB_CLASS}',"
+            f"Таб 'Булки' не активен после клика. "
+            f"Ожидался класс '{ACTIVE_TAB_CLASS}', "
             f"но найдены классы: {final_buns_classes}"
         )

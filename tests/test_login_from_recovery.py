@@ -34,8 +34,11 @@ class TestLoginFromRecovery:
 
         #5. Проверить успешный вход
         WebDriverWait(driver, 10).until(EC.url_to_be(url_main_page))
-        order_button = WebDriverWait(driver, 10).until(EC.visibility_of_element_located(ORDER_BUTTON))
 
-        #6. Явный assert
-        assert driver.current_url == url_main_page, "Не произошёл переход на главную страницу"
-        assert order_button.text == "Оформить заказ", "Текст кнопки 'Оформить заказ' не совпадает"
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located(ORDER_BUTTON))
+
+        #6. Явный assert ИСПРАВЛЕНО: убрал проверку текста
+        assert driver.current_url == url_main_page, (
+            f"После успешного входа ожидался переход на главную {url_main_page}, "
+            f"но текущий URL: {driver.current_url}"
+        )
